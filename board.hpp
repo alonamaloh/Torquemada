@@ -2,7 +2,7 @@
 
 #include "bitboard.hpp"
 #include <cstdint>
-#include <iostream>
+#include <iosfwd>
 #include <functional>
 
 // Simple position: pieces[side] + kings + side_to_move + reversible_plies
@@ -42,28 +42,12 @@ struct Board {
     return h;
   }
 
-  // ───── ASCII dump ─────
-  friend std::ostream& operator<<(std::ostream& os, Board const& b) {
-    for (int row = 8; row --> 0;) {
-      if (row % 2 == 0)
-	os << "  ";
-      for (int col = 4; col --> 0;) {
-        int idx = row * 4 + col;
-        Bitboard mask = Bitboard(1u) << idx;
-        char c = '_';
-        if (b.pieces[0] & mask) c = (b.kings & mask) ? 'O' : 'o';
-        else if (b.pieces[1] & mask) c = (b.kings & mask) ? 'X' : 'x';
-        os << c << "   ";
-      }
-      os << '\n';
-    }
-    return os;
-  }
-  
   static decltype(NW) * const forward_directions[2][2];
   static decltype(NW) * const backward_directions[2][2];
   static decltype(NE)* const all_directions[4];
 
   std::size_t generate_moves(Move *moves) const;  
 };
+
+std::ostream& operator<<(std::ostream& os, Board const& b);
 

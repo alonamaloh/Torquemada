@@ -1,4 +1,5 @@
 #include "board.hpp"
+#include <iostream>
 
 decltype(NW) * const Board::forward_directions[2][2] = {{NW, NE}, {SW, SE}};
 decltype(NW) * const Board::backward_directions[2][2] = {{SE, SW}, {NE, NW}};
@@ -168,5 +169,22 @@ std::size_t Board::generate_moves(Move *moves) const {
   }
   
   return n_moves;
+}
+
+std::ostream& operator<<(std::ostream& os, Board const& b) {
+  for (int row = 8; row --> 0;) {
+    if (row % 2 == 0)
+      os << "  ";
+    for (int col = 4; col --> 0;) {
+      int idx = row * 4 + col;
+      Bitboard mask = Bitboard(1u) << idx;
+      char c = '_';
+      if (b.pieces[0] & mask) c = (b.kings & mask) ? 'O' : 'o';
+      else if (b.pieces[1] & mask) c = (b.kings & mask) ? 'X' : 'x';
+      os << c << "   ";
+    }
+    os << '\n';
+  }
+  return os;
 }
 
