@@ -1,27 +1,26 @@
 #include "board.hpp"
 #include <random>
 
-Move random_move(Board const &b) {
+long perft(Board const &b, int depth) {
   Move moves[128];
   std::size_t n_moves = b.generate_moves(moves);
-  if (n_moves == 0)
-    return 0;
 
-  static std::mt19937_64 rng;
+  if (depth == 1)
+    return n_moves;
+
+  long result = 0;
+  for (std::size_t i = 0; i < n_moves; ++i) {
+    Move move = moves[i];
+    Board copy = b;
+    copy.make_move(move);
+    result += perft(copy, depth - 1);
+  }
   
-  return moves[rng() % n_moves];
+  return result;
 }
 
 int main() {
-  for (int game = 0; game < 1000; ++game) {
-    Board b;
-    while (1) {
-      std::cout << "-----\n" << b << '\n';
-      
-      Move m = random_move(b);
-      if (m == 0)
-	break;
-      b.make_move(m);
-    }
-  }
+  Board board;
+  for (int i = 1; i <= 12; ++i)
+    std::cout << i << ' ' << perft(board, i) << std::endl;
 }
