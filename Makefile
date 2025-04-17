@@ -1,22 +1,24 @@
 CXX      := c++
-CXXFLAGS := -std=c++20 -O2 -Wall -Wextra -I.
+CXXFLAGS := -std=c++20 -O3 -Wall -Wextra -pedantic -I. -MMD -MP
 
 SRCDIR    := .
 BUILDDIR  := build
 
-SRCS    := board.cpp test.cpp
-OBJS    := $(patsubst %.cpp,$(BUILDDIR)/%.o,$(SRCS))
-TARGET  := $(BUILDDIR)/test
+SRCS      := board.cpp test.cpp
+OBJS      := $(patsubst %.cpp,$(BUILDDIR)/%.o,$(SRCS))
+DEPS      := $(OBJS:.o=.d)
+
+TARGET    := $(BUILDDIR)/test
 
 .PHONY: all clean
 
 all: $(TARGET)
 
-# ensure build directory exists
+# make sure build/ exists
 $(BUILDDIR):
 	mkdir -p $@
 
-# compile any .cpp → .o in build/
+# compile .cpp → .o and emit .d
 $(BUILDDIR)/%.o: %.cpp | $(BUILDDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
@@ -24,6 +26,8 @@ $(BUILDDIR)/%.o: %.cpp | $(BUILDDIR)
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
+# include the auto‑generated dependency files (ignore if missing)
+-include $(DEPS)
+
 clean:
 	rm -rf $(BUILDDIR)/*
-

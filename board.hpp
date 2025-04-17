@@ -204,11 +204,13 @@ struct Board {
     if (max_captured > 0)
       return n_moves;
 
+    Bitboard empty = ~occupied();
+    
     // Pawn non-captures
     for (int d = 0; d < 2; ++d) {
       auto backward = backward_directions[side_to_move][d];
       auto forward = forward_directions[side_to_move][d];
-      for (Bitboard from : Iterate(own_pawns() & (*backward)(~occupied())))
+      for (Bitboard from : Iterate(own_pawns() & (*backward)(empty)))
 	moves[n_moves++] = from ^ (*forward)(from);
     }
 
@@ -217,7 +219,7 @@ struct Board {
       auto forward = all_directions[d];
       auto backward = all_directions[d ^ 2];
       for (Bitboard from : Iterate(own_kings() & (*backward)(~occupied()))) {
-	for (Bitboard to = (*forward)(from); to; to = (*forward)(to) & ~occupied())
+	for (Bitboard to = (*forward)(from); to; to = (*forward)(to) & empty)
 	  moves[n_moves++] = from ^ to;
       }
     }
