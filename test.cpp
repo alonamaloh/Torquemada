@@ -21,6 +21,15 @@ long perft(Board const &b, int depth) {
 
 int main() {
   Board board;
-  for (int i = 1; i <= 12; ++i)
+  for (int i = 1; i <= 11; ++i)
     std::cout << i << ' ' << perft(board, i) << std::endl;
+
+  std::cout << "-----\n";
+  
+  board.pieces[0] = 0x00000007u;
+  board.pieces[1] = 0x00000008u;
+  board.kings = 0x0000000fu;
+  for (int i = 1; i <= 7; ++i)
+    std::cout << i << ' ' << perft(board, i) << std::endl;
+  
 }
